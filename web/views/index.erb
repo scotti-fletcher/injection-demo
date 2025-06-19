@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flappy Wiz</title>
+  <style>
+      body {
+          margin: 0;
+          padding: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          background-color: #2c2c54;
+          font-family: Arial, sans-serif;
+          overflow: hidden;
+      }
+
+      #game-container {
+          position: relative;
+          width: 800px;
+          height: 600px;
+          background-color: #474787;
+          overflow: hidden;
+      }
+
+      #game-canvas {
+          width: 100%;
+          height: 100%;
+      }
+
+      .screen {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          color: white;
+          background-color: rgba(0, 0, 0, 0.7);
+      }
+
+      #start-screen h1, #game-over-screen h1 {
+          font-size: 48px;
+          margin-bottom: 20px;
+          color: #5e9cce;
+      }
+
+      button {
+          background-color: #5e60ce;
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          font-size: 18px;
+          border-radius: 5px;
+          cursor: pointer;
+          margin: 10px;
+      }
+
+      button:hover {
+          background-color: #6930c3;
+      }
+
+      #wiz-button {
+          background-color: #1dd1a1;
+          padding: 15px 30px;
+          font-size: 20px;
+          font-weight: bold;
+      }
+
+      #wiz-button:hover {
+          background-color: #10ac84;
+      }
+
+      #wiz-button.enabled {
+          background-color: #ee5253;
+      }
+
+      #wiz-button.enabled:hover {
+          background-color: #ff6b6b;
+      }
+
+      input {
+          padding: 10px;
+          font-size: 16px;
+          border-radius: 5px;
+          border: none;
+          margin: 10px;
+          width: 200px;
+      }
+
+      #score-display {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          font-size: 24px;
+          color: rgb(0, 0, 0);
+          z-index: 10;
+      }
+
+      #high-scores {
+          margin-top: 20px;
+          text-align: center;
+      }
+
+      #high-scores h2 {
+          color: #5e9cce;
+          margin-bottom: 10px;
+      }
+
+      #high-scores-list {
+          list-style-type: none;
+          padding: 0;
+          margin: 0;
+      }
+
+      #high-scores-list li {
+          font-size: 18px;
+          margin: 5px 0;
+          padding: 5px 10px;
+          background-color: rgba(255, 255, 255, 0.1);
+          border-radius: 5px;
+      }
+
+      #high-scores-game-over {
+          margin-top: 20px;
+          text-align: center;
+      }
+
+      #high-scores-game-over h2 {
+          color: #5e9cce;
+          margin-bottom: 10px;
+      }
+
+      #high-scores-list-game-over {
+          list-style-type: none;
+          padding: 0;
+          margin: 0;
+      }
+
+      #high-scores-list-game-over li {
+          font-size: 18px;
+          margin: 5px 0;
+          padding: 5px 10px;
+          background-color: rgba(255, 255, 255, 0.1);
+          border-radius: 5px;
+      }
+
+      #wiz-button-container {
+          position: absolute;
+          bottom: 20px;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+      }
+  </style>
+</head>
+<body>
+<div id="game-container">
+  <canvas id="game-canvas"></canvas>
+  <div id="score-display">Score: 0</div>
+
+  <div id="start-screen" class="screen">
+    <h1>Flap to Win</h1>
+    <input type="text" id="player-name" placeholder="Enter your name">
+    <button id="start-button">Start Game</button>
+    <div id="high-scores">
+      <h2>High Scores</h2>
+      <ul id="high-scores-list"></ul>
+    </div>
+  </div>
+
+  <div id="game-over-screen" class="screen" style="display: none;">
+    <h1>Game Over</h1>
+    <div id="final-score">Your Score: 0</div>
+    <button id="restart-button">Play Again</button>
+    <div id="high-scores-game-over">
+      <h2>High Scores</h2>
+      <ul id="high-scores-list-game-over"></ul>
+    </div>
+  </div>
+
+  <div id="wiz-button-container">
+    <button id="wiz-button">Enable Wiz</button>
+  </div>
+</div>
+
+<script>
+    // Game variables
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+    const startScreen = document.getElementById('start-screen');
+    const gameOverScreen = document.getElementById('game-over-screen');
+    const startButton = document.getElementById('start-button');
+    const restartButton = document.getElementById('restart-button');
+    const playerNameInput = document.getElementById('player-name');
+    const scoreDisplay = document.getElementById('score-display');
+    const finalScore = document.getElementById('final-score');
+    const highScoresList = document.getElementById('high-scores-list');
+    const highScoresListGameOver = document.getElementById('high-scores-list-game-over');
+    const wizButton = document.getElementById('wiz-button');
+
+    // Set canvas size
+    canvas.width = 800;
+    canvas.height = 600;
+
+    // Game state
+    let gameRunning = false;
+    let score = 0;
+    let playerName = '';
+    let highScores = [];
+    let wizEnabled = false;
+
+    // Character images
+    const wizLogo = new Image();
+    wizLogo.src = 'wiz.jpeg'; // Wiz logo
+    const personImg = new Image();
+    personImg.src = 'person.png'; // Person
+    let currentImage = personImg;
+
+    const logoWidth = 45;
+    const logoHeight = 45;
+    let logoX = 150;
+    let logoY = 150;
+    // let logoY = canvas.height / 2;
+    let logoVelocity = 0;
+    const gravity = 0.25;
+    const jumpStrength = -5;
+
+    // Obstacle properties
+    const obstacleWidth = 110;
+    const minGapHeight = 150;
+    const maxGapHeight = 200;
+    let obstacles = [];
+    let obstacleSpeed = 2;
+    let obstacleInterval = 140;
+    let frameCount = 0;
+
+    // Obstacle themes
+    const obstacleThemes = [
+        { name: "CVE", color: "#ff6b6b" },
+        { name: "Secrets", color: "#48dbfb" },
+        { name: "Excess Pivs", color: "#1dd1a1" },
+        { name: "Threats", color: "#feca57" },
+        { name: "Exposed VM", color: "#5f27cd" },
+        { name: "Shadow Admin", color: "#ee5253" },
+        { name: "Lateral Move", color: "#ff9f43" },
+        { name: "IAM", color: "#ff3838" },
+        { name: "Plaintext", color: "#00d2d3" },
+        { name: "Zombie Res", color: "#576574" },
+        { name: "Drift", color: "#8395a7" },
+        { name: "Open Port", color: "#ffb142" },
+        { name: "No MFA", color: "#c56cf0" },
+        { name: "API Exploit", color: "#ff4d4d" },
+        { name: "Supply Chain", color: "#3c6382" },
+        { name: "Log4Shell", color: "#e55039" },
+        { name: "Egress Leak", color: "#78e08f" },
+        { name: "Priv Esc", color: "#38ada9" },
+        { name: "Zero Day", color: "#e55039" },
+        { name: "Misconfig", color: "#60a3bc" }
+    ];
+
+    // Initialize game
+    function init() {
+        // Reset game state
+        score = 0;
+        logoX = 150;
+        logoY = canvas.height / 2;
+        logoVelocity = 0;
+        obstacles = [];
+        obstacleSpeed = 2;
+        obstacleInterval = 160;
+        frameCount = 0;
+
+        // Update UI
+        scoreDisplay.textContent = `Score: ${score}`;
+
+        // Get player name
+        playerName = playerNameInput.value.trim() || 'Anonymous';
+
+        // Start game loop
+        gameRunning = true;
+        gameLoop();
+    }
+
+    // Game loop
+    function gameLoop() {
+        if (!gameRunning) return;
+
+        update();
+        draw();
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    // Smooth Superman-like navigation
+    function autoNavigate() {
+        if (!wizEnabled || !gameRunning || obstacles.length === 0) return;
+
+        // Find the next obstacle that's approaching
+        const nextObstacle = obstacles.find(obs => obs.x + obstacleWidth > logoX - 50 && obs.x < logoX + 300);
+        if (!nextObstacle) return;
+
+        // Calculate target position (center of gap)
+        const targetY = nextObstacle.topHeight + (nextObstacle.gapHeight / 2);
+        const currentY = logoY + (logoHeight / 2);
+
+        // Calculate smooth movement towards target
+        const distanceToTarget = targetY - currentY;
+        const direction = distanceToTarget > 0 ? 1 : -1;
+
+        // Apply smooth acceleration based on distance
+        if (Math.abs(distanceToTarget) > 15) {
+            logoVelocity = distanceToTarget * 0.05;
+
+            // Limit maximum speed for smooth movement
+            if (logoVelocity > 15) logoVelocity = 15;
+            if (logoVelocity < -15) logoVelocity = -15;
+        } else {
+            // Slow down when close to target
+            logoVelocity *= 0.95;
+        }
+
+        // Apply slight gravity to keep movement natural
+        if (!wizEnabled) {
+            logoVelocity += gravity;
+        }
+    }
+
+    // Update game state
+    function update() {
+        // Apply gravity only when Wiz is disabled
+        if (!wizEnabled) {
+            logoVelocity += gravity;
+        }
+        logoY += logoVelocity;
+
+        // Auto navigation if Wiz is enabled
+        if (wizEnabled) {
+            autoNavigate();
+        }
+
+        // Check for collisions with floor and ceiling
+        if (logoY + logoHeight > canvas.height) {
+            gameOver();
+            return;
+        }
+
+        if (logoY < 0) {
+            logoY = 0;
+            logoVelocity = 0;
+        }
+
+        // Create new obstacles
+        frameCount++;
+        if (frameCount >= obstacleInterval) {
+            createObstacle();
+            frameCount = 0;
+
+            // Make game progressively harder
+            if (score > 0 && score % 5 === 0) {
+                obstacleSpeed += 0.1;
+                if (obstacleInterval > 70) {
+                    obstacleInterval -= 5;
+                }
+            }
+        }
+
+        // Update obstacles
+        for (let i = obstacles.length - 1; i >= 0; i--) {
+            const obstacle = obstacles[i];
+            obstacle.x -= obstacleSpeed;
+
+            // Check if logo passed the obstacle
+            if (!obstacle.passed && logoX > obstacle.x + obstacleWidth) {
+                score++;
+                scoreDisplay.textContent = `Score: ${score}`;
+                obstacle.passed = true;
+            }
+
+            // Check for collision with obstacle
+            if (
+                logoX + logoWidth > obstacle.x &&
+                logoX < obstacle.x + obstacleWidth &&
+                (logoY < obstacle.topHeight || logoY + logoHeight > obstacle.topHeight + obstacle.gapHeight)
+            ) {
+                gameOver();
+                return;
+            }
+
+            // Remove obstacles that are off-screen
+            if (obstacle.x + obstacleWidth < 0) {
+                obstacles.splice(i, 1);
+            }
+        }
+    }
+
+    // Draw game elements
+    function draw() {
+        // Clear canvas
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw obstacles
+        obstacles.forEach(obstacle => {
+            const labelMinHeight = 40;
+
+            // Top obstacle
+            ctx.fillStyle = obstacle.theme.color;
+            ctx.fillRect(obstacle.x, 0, obstacleWidth, obstacle.topHeight);
+
+            // Draw label on top obstacle if there's enough space
+            if (obstacle.topHeight >= labelMinHeight) {
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(obstacle.theme.name, obstacle.x + obstacleWidth / 2, obstacle.topHeight / 2);
+            }
+
+            // Bottom obstacle
+            const bottomHeight = canvas.height - (obstacle.topHeight + obstacle.gapHeight);
+            ctx.fillStyle = obstacle.theme.color;
+            ctx.fillRect(
+                obstacle.x,
+                obstacle.topHeight + obstacle.gapHeight,
+                obstacleWidth,
+                bottomHeight
+            );
+
+            // Draw label on bottom obstacle if there's enough space
+            if (bottomHeight >= labelMinHeight) {
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                const bottomTextY = obstacle.topHeight + obstacle.gapHeight + bottomHeight / 2;
+                ctx.fillText(obstacle.theme.name, obstacle.x + obstacleWidth / 2, bottomTextY);
+            }
+        });
+
+        // Draw current character
+        if (currentImage.complete) {
+            ctx.drawImage(currentImage, logoX, logoY, logoWidth, logoHeight);
+        } else {
+            // Fallback if image isn't loaded
+            ctx.fillStyle = wizEnabled ? 'blue' : 'green';
+            ctx.fillRect(logoX, logoY, logoWidth, logoHeight);
+        }
+
+        // Draw Wiz enabled indicator
+        if (wizEnabled && gameRunning) {
+            ctx.fillStyle = 'rgba(29, 209, 161, 0.7)';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('Wiz Mode: Auto-Pilot!', 20, 40);
+        }
+    }
+
+    // Create a new obstacle
+    function createObstacle() {
+        const gapHeight = minGapHeight + Math.floor(Math.random() * (maxGapHeight - minGapHeight));
+        const topHeight = Math.floor(Math.random() * (canvas.height - gapHeight - 100)) + 50;
+        const theme = obstacleThemes[Math.floor(Math.random() * obstacleThemes.length)];
+
+        obstacles.push({
+            x: canvas.width,
+            topHeight,
+            gapHeight,
+            passed: false,
+            theme
+        });
+    }
+
+    // Game over
+    function gameOver() {
+        gameRunning = false;
+        finalScore.textContent = `Your Score: ${score}`;
+        gameOverScreen.style.display = 'flex';
+
+        // Submit score
+        submitScore();
+    }
+
+    // Submit player score
+    function submitScore() {
+        const scoreData = {
+            player: playerName,
+            score: score
+        };
+
+        fetch('/score', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(scoreData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Score submitted successfully:', data);
+                loadHighScores();
+            })
+            .catch(error => {
+                console.error('Error submitting score:', error);
+                updateHighScores();
+            });
+    }
+
+    // Load high scores from server
+    function loadHighScores() {
+        fetch('/highscores')
+            .then(response => response.json())
+            .then(data => {
+                highScores = data;
+                updateHighScoresDisplay();
+            })
+            .catch(error => {
+                console.error('Error fetching high scores:', error);
+            });
+    }
+
+    // Update high scores with current player's score
+    function updateHighScores() {
+        highScores.push({ player: playerName, score: score });
+        highScores.sort((a, b) => b.score - a.score);
+        highScores.forEach((score, index) => {
+            score.position = index + 1;
+        });
+        highScores = highScores.slice(0, 3);
+        updateHighScoresDisplay();
+    }
+
+    // Update high scores display - MODIFIED TO MAKE BOTH LISTS IDENTICAL
+    function updateHighScoresDisplay() {
+        // Clear both lists
+        highScoresList.innerHTML = '';
+        highScoresListGameOver.innerHTML = '';
+
+        // Populate both lists identically
+        highScores.forEach(score => {
+            const li = document.createElement('li');
+            li.textContent = `${score.position}. ${score.player}: ${score.score}`;
+
+            // Clone the li element for both lists
+            highScoresList.appendChild(li);
+            highScoresListGameOver.appendChild(li.cloneNode(true));
+        });
+    }
+
+    // Toggle Wiz functionality
+    function toggleWiz() {
+        wizEnabled = !wizEnabled;
+        currentImage = wizEnabled ? wizLogo : personImg;
+
+        if (wizEnabled) {
+            wizButton.textContent = 'Disable Wiz';
+            wizButton.classList.add('enabled');
+            // Reset velocity when enabling Wiz for smoother transition
+            logoVelocity = 0;
+        } else {
+            wizButton.textContent = 'Enable Wiz';
+            wizButton.classList.remove('enabled');
+        }
+    }
+
+    // Event listeners
+    startButton.addEventListener('click', () => {
+        startScreen.style.display = 'none';
+        init();
+    });
+
+    restartButton.addEventListener('click', () => {
+        gameOverScreen.style.display = 'none';
+        init();
+    });
+
+    wizButton.addEventListener('click', toggleWiz);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && gameRunning && !wizEnabled) {
+            logoVelocity = jumpStrength;
+            e.preventDefault();
+        }
+    });
+
+    canvas.addEventListener('click', () => {
+        if (gameRunning && !wizEnabled) {
+            logoVelocity = jumpStrength;
+        }
+    });
+
+    // Touch support for mobile
+    canvas.addEventListener('touchstart', (e) => {
+        if (gameRunning && !wizEnabled) {
+            logoVelocity = jumpStrength;
+            e.preventDefault();
+        }
+    });
+
+    // Load high scores when page loads
+    loadHighScores();
+
+    // Ensure images are properly loaded
+    wizLogo.onload = personImg.onload = () => {
+        draw();
+    };
+</script>
+</body>
+</html>
