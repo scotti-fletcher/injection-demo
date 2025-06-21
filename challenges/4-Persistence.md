@@ -37,7 +37,7 @@ echo "public key from Step 4" >> /flappy/mapped_drive/.ssh/authorized_keys
 ```
 7. Run the command to get the IP address of the WebServer EC2 instance (this should match the Public IP in the AWS console):
 ```bash
-apt update && apt install -y curl jq && curl ipconfig.io
+curl ipconfig.io
 ```
 8. SSH to the EC2 instance directly:
 ```bash
