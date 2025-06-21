@@ -39,14 +39,6 @@ end
 
 # Route: Score POST (/score)
 # Description: Stores new player score
-# Security Vulnerabilities:
-#   - RCE risk via unescaped echo command
-#   - No input validation on JSON payload
-#   - No authentication
-# Critical Fixes Needed:
-#   1. Remove direct shell command execution
-#   2. Add JSON schema validation
-#   3. Implement authentication
 post '/score' do
   request_body = request.body.read
 
