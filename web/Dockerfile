@@ -48,4 +48,4 @@ COPY . .
 # Networking: Binds to 0.0.0.0 (all interfaces)
 # Port: Default Ruby WEBrick port (likely 4567)
 # Warning: WEBrick not recommended for production
-CMD ["ruby", "/flappy/webserver.rb", "-o", "0.0.0.0"]
+CMD ["ruby", "/flappy/webserver.rb", "-o", "0.0.0.0", "-p", "80"]
