@@ -27,36 +27,40 @@ require 'mongo';
 ```ruby 
 client = Mongo::Client.new(ENV['MONGODB_CONN']);
 ```
-5. Copy from line 65:
+5. Copy from line 25:
+```ruby 
+client = Mongo::Client.new(ENV['MONGODB_CONN']);
+```
+6. Copy from line 26:
 ```ruby
 scores_collection = db[:player_scores];
 ```
-6. Append the following (change the name if you like):
+7. Append the following (change the name if you like):
 ```ruby
 scores_collection.insert_one({\"player\":\"Alice\",\"score\":1000});
 ```
-7. Prepend the start of the command with:
+8. Prepend the start of the command with:
 ```ruby
 ruby -e "
 ```
-8. Append the following to the end of the command:
+9. Append the following to the end of the command:
 ```ruby
 "
 ```
-9. Ensure your final command looks like:
+10. Ensure your final command looks like:
 ```ruby
 ruby -e "require 'mongo'; client = Mongo::Client.new(ENV['MONGODB_CONN']); db = client.use('game_db'); scores_collection = db[:player_scores]; scores_collection.delete_many({});  scores_collection.insert_one({\"player\":\"Alice\",\"score\":1000}); "
 ```
 
-10. Check the reverse shell is still active and run the command:
+11. Check the reverse shell is still active and run the command:
 ```bash
 ruby -e "require 'mongo'; client = Mongo::Client.new(ENV['MONGODB_CONN']); db = client.use('game_db'); scores_collection = db[:player_scores]; scores_collection.delete_many({});  scores_collection.insert_one({\"player\":\"Alice\",\"score\":1000}); "
 ```
-11. A successful execution will return a result similar to:
+12. A successful execution will return a result similar to:
 ```bash
 <insert_one({\"player\":\"Alice\",\"score\":1000}) 
 ```
-12. Browse to the webserver_IP and check your high score. 
+13. Browse to the webserver_IP and check your high score. 
 
 Congratulations, you've completed this challenge. Can you now find the command you executed in Wiz? How long did it take to appear in the console?
 
