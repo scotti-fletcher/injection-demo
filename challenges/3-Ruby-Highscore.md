@@ -27,13 +27,13 @@ require 'mongo';
 ```ruby 
 client = Mongo::Client.new(ENV['MONGODB_CONN']);
 ```
-5. Copy from line 25:
+5. Copy from line 26:
 ```ruby 
-client = Mongo::Client.new(ENV['MONGODB_CONN']);
+db = client.use('game_db');
 ```
-6. Copy from line 26:
+6. Copy from line 27:
 ```ruby
-scores_collection = db[:player_scores];
+scores_collection = db[:player_scores]
 ```
 7. Append the following (change the name if you like):
 ```ruby
