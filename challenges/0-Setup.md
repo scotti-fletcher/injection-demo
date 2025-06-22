@@ -19,6 +19,6 @@ ssh -i saved_ssh_key ubuntu@webserver_IP
 ```bash
 ssh -i saved_ssh_key ubuntu@attackerbox_IP
 ```
-7. Install the sensor from the [Wiz Sensor Deployment Page](https://app.wiz.io/settings/deployments/setup/sensor-linux-native)
+7. Install the Wiz sensor from the [Wiz Sensor Deployment Page](https://app.wiz.io/settings/deployments/setup/sensor-linux-native) on the WebServer EC2 instance.
 8. Open your web browser and browse to http://webserver_IP.
 9. Can you get a high score?
