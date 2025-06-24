@@ -1,4 +1,4 @@
-# Data source to get the existing VPC
+
 data "aws_vpc" "wizlabs_vpc" {
   filter {
     name   = "tag:Name"
@@ -6,12 +6,20 @@ data "aws_vpc" "wizlabs_vpc" {
   }
 }
 
-# Data source to get subnets in the VPC
-data "aws_subnet" "wizlabs_public_subnets" {
-  vpc_id = data.aws_vpc.wizlabs_vpc.id
+data "aws_subnets" "wizlabs_public_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.wizlabs_vpc.id]
+  }
+
   filter {
     name   = "tag:Name"
     values = ["*public*"]
+  }
+
+  filter {
+    name   = "map-public-ip-on-launch"
+    values = ["true"]
   }
 }
 
