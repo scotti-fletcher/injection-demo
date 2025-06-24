@@ -10,8 +10,7 @@ resource "aws_key_pair" "generated_key" {
 
 resource "local_file" "private_key" {
   content  = tls_private_key.lab_key.private_key_pem
-  # filename = "${path.module}/example-key.pem"
-  filename = "~/lab_key.pem"
+  filename = pathexpand("~/lab_key.pem")
   file_permission = "0400"
 }
 
