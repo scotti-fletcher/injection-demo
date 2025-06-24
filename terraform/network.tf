@@ -1,32 +1,7 @@
-
-data "aws_vpc" "wizlabs_vpc" {
-  filter {
-    name   = "tag:Name"
-    values = ["Wizlabs-VPC"]
-  }
-}
-
-data "aws_subnets" "wizlabs_public_subnets" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.wizlabs_vpc.id]
-  }
-
-  filter {
-    name   = "tag:Name"
-    values = ["*public*"]
-  }
-
-  filter {
-    name   = "map-public-ip-on-launch"
-    values = ["true"]
-  }
-}
-
 resource "aws_security_group" "lab_sg" {
   name        = "lab-instance-sg"
   description = "Allow SSH and HTTP traffic"
-  vpc_id      = data.aws_vpc.wizlabs_vpc.id
+  vpc_id      = data.aws_vpc.wizlabs.id
 
   ingress {
     from_port   = 22
