@@ -3,7 +3,7 @@ resource "aws_instance" "ubuntu_server" {
   instance_type          = "t2.medium"
   key_name               = "lab_key"
   vpc_security_group_ids = [aws_security_group.lab_sg.id]
-  subnet_id              = data.aws_subnets.wizlabs_public_subnets.ids[0]
+  subnet_id              = local.public_subnet_ids[0]
   iam_instance_profile   = aws_iam_instance_profile.flappy_lab_profile.name
   associate_public_ip_address = true
 
