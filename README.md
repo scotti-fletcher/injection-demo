@@ -17,6 +17,9 @@ This demo application showcases **Command Injection vulnerabilities** - one of t
 - 🔍 Vulnerability demonstration
 - 🛡️ Secure coding education
 
+## 💀 Getting Started
+To get started please see [0-Setup.md](challenges/0-Setup.md)
+
 ```bash
 # Disclaimer
 THIS SOFTWARE IS INTENTIONALLY VULNERABLE.
