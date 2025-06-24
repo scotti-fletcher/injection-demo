@@ -118,12 +118,12 @@ resource "aws_instance" "lab_attacker" {
 }
 
 # Output the public IP for easy access
-output "instance_public_ip" {
+output "webserver_public_ip" {
   value = aws_instance.lab_webserver.public_ip
 }
 
 
 # Output the public IP for easy access
-output "instance_public_ip" {
+output "attacker_public_ip" {
   value = aws_instance.lab_attacker.public_ip
 }
