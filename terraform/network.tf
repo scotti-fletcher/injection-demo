@@ -1,5 +1,5 @@
 resource "aws_security_group" "webserver_sg" {
-  name        = "lab-instance-sg"
+  name        = "lab-webserver-sg"
   description = "Allow SSH and HTTP traffic"
   vpc_id      = data.aws_vpc.wizlabs.id
 
@@ -25,12 +25,12 @@ resource "aws_security_group" "webserver_sg" {
   }
 
   tags = {
-    Name = "lab-instance-sg"
+    Name = "lab-webserver-sg"
   }
 }
 
 resource "aws_security_group" "attacker_sg" {
-  name        = "lab-instance-sg"
+  name        = "lab-attacker-sg"
   description = "Allow all ingress and egress traffic"
   vpc_id      = data.aws_vpc.wizlabs.id
 
