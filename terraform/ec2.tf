@@ -1,14 +1,14 @@
-resource "aws_instance" "ubuntu_server" {
+resource "aws_instance" "lab_webserver" {
   ami                    = "ami-020cba7c55df1f615" # Ubuntu 24.04 LTS
   instance_type          = "t2.medium"
   key_name               = "lab_key"
-  vpc_security_group_ids = [aws_security_group.lab_sg.id]
+  vpc_security_group_ids = [aws_security_group.webserver_sg.id]
   subnet_id              = local.public_subnet_ids[0]
   iam_instance_profile   = aws_iam_instance_profile.flappy_lab_profile.name
   associate_public_ip_address = true
 
   root_block_device {
-    volume_size = 20 # 20GB root volume
+    volume_size = 20
     volume_type = "gp2"
   }
 
@@ -97,7 +97,33 @@ EOF
   }
 }
 
+
+resource "aws_instance" "lab_attacker" {
+  ami                    = "ami-020cba7c55df1f615" # Ubuntu 24.04 LTS
+  instance_type          = "t2.small"
+  key_name               = "lab_key"
+  vpc_security_group_ids = [aws_security_group.attacker_sg.id]
+  subnet_id              = local.public_subnet_ids[0]
+  associate_public_ip_address = true
+
+  root_block_device {
+    volume_size = 8
+    volume_type = "gp2"
+  }
+
+
+  tags = {
+    Name = "Lab-Attacker"
+  }
+}
+
 # Output the public IP for easy access
 output "instance_public_ip" {
-  value = aws_instance.ubuntu_server.public_ip
+  value = aws_instance.lab_webserver.public_ip
+}
+
+
+# Output the public IP for easy access
+output "instance_public_ip" {
+  value = aws_instance.lab_attacker.public_ip
 }
