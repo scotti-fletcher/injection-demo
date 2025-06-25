@@ -30,7 +30,7 @@ lab_key_name = "lab_key"
 private_key = <sensitive>
 webserver_public_ip = "3.90.44.141" #Your IP will be different
 ```
-7. Make note of the attacker_public_ip and webserver_public_ip as we will be using these throughout the rest of the lab. The SSH key 
+7. Make note of the attacker_public_ip and webserver_public_ip as we will be using these throughout the rest of the lab. The SSH key will automatically be saved to your home folder as lab_key.pem.
 8. SSH to the webserver host from the CloudShell:
 ```bash
 ssh -i ~/lab_key.pem ubuntu@webserver_public_ip
