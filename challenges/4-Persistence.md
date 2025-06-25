@@ -63,7 +63,10 @@ echo "{attacker_key.pub}" > /tmp/attacker_key.pub
 --key-name attacker_key \
 --associate-public-ip-address
 ```
-11. SSH to the newly created EC2 instance
+11. From your laptop (where you created your attacker_key) SSH to the newly created EC2 instance:
+```bash
+ssh -i attacker_key ubuntu@ip_address
+```
 
 
 Congratulations, you've completed this challenge. Can you now find the corresponding detection in Wiz? How long did it take to appear in the console?
