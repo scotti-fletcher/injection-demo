@@ -10,5 +10,5 @@ cd ~/injection-demo/terraform
 terraform init
 terraform apply --auto-approve
 cd ~/
-echo "Please wait 60 seconds for the EC2 instances to finish provisioning"
+echo "Please wait 60 seconds for the EC2 instances to finish provisioning before connecting via SSH to the WebServer using CloudShell"
 sleep 60 #wait for the EC2s to be ready to accept SSH connections
