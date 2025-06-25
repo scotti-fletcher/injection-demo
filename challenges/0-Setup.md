@@ -9,6 +9,8 @@ The following steps are required to set up the lab. This should take approximate
 
 ### 🎯 Your Mission
 
+This entire lab should be run in an incognito browser session.
+
 1. Login and request the https://lms.training.wiz.io/path/wiz-for-threat-detection-and-response Lab be created. This will take approximately 10 minutes.
 2. Follow the lab guide and sign in to the AWS Management Console and Wiz Defend Playground Tenant.
 3. Open an AWS CloudShell session in the us-east-1 region. You can use this link https://us-east-1.console.aws.amazon.com/cloudshell/home?region=us-east-1
