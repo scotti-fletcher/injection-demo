@@ -6,8 +6,7 @@ ln -s ~/.tfenv/bin/* ~/bin/
 tfenv install
 tfenv use 1.12.2
 
-git clone https://github.com/scotti-fletcher/injection-demo
-cd injection-demo/terraform
+cd ~/injection-demo/terraform
 terraform init
 terraform apply --auto-approve
 cd ~/
