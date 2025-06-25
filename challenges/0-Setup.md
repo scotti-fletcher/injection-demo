@@ -38,4 +38,8 @@ webserver_public_ip = "3.90.44.141" #Your IP will be different
 ssh -i ~/lab_key.pem ubuntu@webserver_public_ip
 ```
 8. Install the Wiz sensor from the [Wiz Sensor Deployment Page](https://app.wiz.io/settings/deployments/setup/sensor-linux-native) on the WebServer EC2 instance.
-9. Browse to http://webserver_IP, see if you can get a high score. 
+9. Close the Webserver SSH session by running
+```bash
+exit
+```
+10. Browse to http://webserver_IP, see if you can get a high score. 
