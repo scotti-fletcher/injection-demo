@@ -38,7 +38,8 @@ webserver_public_ip = "3.90.44.141" #Your IP will be different
 ssh -i ~/lab_key.pem ubuntu@webserver_public_ip
 ```
 8. Install the Wiz sensor from the [Wiz Sensor Deployment Page](https://app.wiz.io/settings/deployments/setup/sensor-linux-native) on the WebServer EC2 instance.
-9. Close the Webserver SSH session by running
+9. Verify the status of the Wiz sensor at [Wiz Deployment Page > Sensor](https://app.wiz.io/settings/deployments#%7E%28type%7E%27SENSOR%29) and search `odluserXXXXXXX-aws-connector`  (`XXXXXXX` being the 7-digit number in your AWS user name `odl_user_XXXXXXX`)
+10. Close the Webserver SSH session by running
 ```bash
 exit
 ```
