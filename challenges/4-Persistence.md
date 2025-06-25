@@ -63,7 +63,7 @@ echo "{attacker_key.pub}" > /tmp/attacker_key.pub
 --key-name attacker_key \
 --associate-public-ip-address
 ```
-11. Run the following command to get the Public IP address of the newly created EC2 instance:
+11. Run the following command to get the Public IP address of the newly created EC2 instance (you may need to wait for ~2 minutes for the instance to become running):
 ```bash
 /tmp/aws-cli-bin/aws ec2 describe-instances \
   --filters "Name=tag:Name,Values=NothingToSeeHere" \
