@@ -63,7 +63,16 @@ echo "{attacker_key.pub}" > /tmp/attacker_key.pub
 --key-name attacker_key \
 --associate-public-ip-address
 ```
-11. From your laptop (where you created your attacker_key) SSH to the newly created EC2 instance:
+11. Run the following command to get the Public IP address of the newly created EC2 instance:
+```bash
+/tmp/aws-cli-bin/aws ec2 describe-instances \
+  --filters "Name=tag:Name,Values=NothingToSeeHere" \
+           "Name=instance-state-name,Values=running" \
+  --query "Reservations[0].Instances[0].PublicIpAddress" \
+  --output text
+
+```
+12. From your laptop (where you created your attacker_key) SSH to the newly created EC2 instance:
 ```bash
 ssh -i attacker_key ubuntu@ip_address
 ```
