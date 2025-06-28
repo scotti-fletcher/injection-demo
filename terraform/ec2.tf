@@ -75,7 +75,7 @@ sudo bundle config set --local without 'development test'
 sudo bundle install
 
 # Configure Nginx
-server_ip=$(curl -s ipconfig.io)
+server_ip=$(curl -s https://wtfismyip.com/text)
 sudo tee /etc/nginx/sites-enabled/flappy.conf <<NGINXCONFIG
 server {
     listen 80;
