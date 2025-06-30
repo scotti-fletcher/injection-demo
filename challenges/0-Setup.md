@@ -24,6 +24,7 @@ git clone https://github.com/scotti-fletcher/injection-demo && cd injection-demo
 chmod +x run_in_cloudshell.sh && ./run_in_cloudshell.sh
 ```
 Note: If you encounter an error like "InvalidKeyPair.NotFound: The key pair 'lab_key' does not exist", please re-run the commands in step 5.
+
 6. Wait until the script has completed successfully. It may take 2-3 minutes and will finish by printing Terraform outputs e.g.:
 ```bash
 Outputs:
